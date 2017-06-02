@@ -1,0 +1,196 @@
+shell command for hbase nosql databases
+
+
+to start a hadoop service :start-all.sh
+to start a hbase service :hbase-all.sh
+to open a hbase shell:hbase shell
+
+
+HBase shell commands
+
+1.List command
+
+==>hbase>list
+
+list is used to list the tables in hbase
+
+version command
+
+==>hbase>version
+
+shows hbase version
+
+
+3.whoami command
+
+==>hbase>whoami
+
+it shows the user who is using
+
+
+4.create command
+
+==>hbase>create 'tablename','columnarfamily','columnarfamily',....
+
+it is used to create a table 
+
+example: hbase>create :'emp','personaldata','professionaldata'
+-------
+In this example table emp is a table name and personaldata and professionaldata is columnarfamily
+
+5.put command
+
+==>hbase>put 'tablename','rowid','columnarfamily:columnname','value'
+
+it is used to insert the data 
+
+example:hbase>put 'emp','1','personaldata:name','xxx'
+-------
+In this example emp is a table name 1 is an row id .In row id what ever we want we can give like
+string,integer etc because it converts into bytearray.And personaldata is columanarfamily and name is 
+an columnname and xxx is an value  
+
+6.disable command
+
+==>hbase>disable 'tablename'
+
+it is used to disable the table (before droping the table we need to disable)
+
+example:hbase>disable 'emp'
+
+7.drop command
+
+==>hbase>drop 'tablename'
+
+it is used to drop the table
+
+example:hbase>drop 'emp'
+
+
+8.disable_all command
+
+==>hbase>disable_all 'tablesequence.*'
+
+it is used to delete the tables with sequence 
+
+example:hbase>disable_all 'e.*'
+
+In this example e is the starting alphabet which states that disabling all the tables which starts that
+alphabet
+
+
+9.enable command
+
+==>hbase>enable 'tablename'
+
+it is used to enable the table which is disabled
+
+example:enable 'emp'
+
+
+10.enable_all command
+
+==>hbase>enabled_all 'tablesequence.*'
+
+it is used to enabled all the tables which are disabled
+
+example:enabled_all 'e.*'
+
+
+11.exists command
+
+==>hbase>exists 'table'
+
+it is used to see whether the table is exists or not
+
+example:exists 'emp'
+
+
+12.alter command
+
+==>hbase>alter 'tablename','columnfamily'
+
+it is used to add a extra column in columnfamily
+
+example:alter 'emp','projectdata'
+
+in this emp is an tablename and columnfamily is projectdata
+
+
+==>hbase>alter 'tablename','delete','columnfamily'
+
+it is used to delete a particular columnfamily
+
+example:alter 'emp','delete','projectdata'
+
+
+
+13.scan command
+
+==>hbase>scan 'tablename'
+
+it is used to scan the columnfamilies in table
+
+example:scan 'emp'
+
+
+
+
+
+HBASE INTEGRATION WITH HIVE
+
+here there are drawbacks in hbase as well as hive 
+
+hbase 
+=> HBASE can easily do CURD operations
+
+=>Hbase has the concept of versions
+
+=>Here aggregation doesnt perform
+
+=>Joins are not perfomred here
+
+
+hive
+=>it doesnt support CURD operations
+
+=>hive doesnt have concept of versions
+
+=>Aggregation works over here
+
+=>joins can be performed easily
+
+
+how this integrations works in hive
+
+first thing we need to add jar files of hbase into hive lib folder by using command
+
+hive shell:
+
+add jar /usr/local/hbase/hbase-0.98.9.jar;
+add jar /usr/local/hbase/protobuf-java-2.5.0.jar;
+add jar /usr/local/hbase/zookeeper-3.4.6.jar;
+add jar /usr/local/hbase/hbase-it-0.98.9-hadoop2-tests.jar;
+add jar /usr/local/hbase/guava-12.1.5.jar;
+
+check the lis of jars in hive whether the jar files are added on it
+ hive >list jars;
+
+hive>set  hbase.zookeeper,quorum = localhost;
+
+Then create external table for hive which cionnects with hbase
+
+create external table tablename(eno int,ename string,esal string,address string) stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler'
+with SERDEPROPERTIES ("hbase.columns.mapping" = ":key,emp:ename,emp:sal,emp:address") TBLPROPERTIES ("hbase.table.name" = "EMPLOYEE");
+
+
+this creates a link in hive table with hbase table
+
+insert overwrite table tablename select eid,ename,esal,address from emp;
+
+this loads the data from hive to hbase directly and updated 
+
+Best thing to work out with hive and hbase!!!!
+
+
+
